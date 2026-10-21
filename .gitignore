@@ -1,0 +1,15 @@
+node_modules
+.output
+.wxt
+dist
+*.log
+/models/
+scripts/eval/report.md
+scripts/eval/queries.json
+*.sqlite
+*.sqlite3
+
+# Private notes, not part of the public repo
+docs/launch/
+docs/plans/
+docs/store/SUBMIT.md

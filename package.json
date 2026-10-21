@@ -1,0 +1,44 @@
+{
+  "name": "history-plus-plus",
+  "description": "Every page you visit, kept forever on your computer. Find it again by what it was about. Nothing leaves your device.",
+  "license": "MIT",
+  "author": "Bendza <bendza@mail.com>",
+  "homepage": "https://github.com/bendza/historyplusplus#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bendza/historyplusplus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bendza/historyplusplus/issues"
+  },
+  "private": true,
+  "version": "1.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "zip:all": "wxt zip && wxt zip -b firefox",
+    "lint:firefox": "wxt build -b firefox && npx --yes web-ext@8 lint --source-dir .output/firefox-mv2",
+    "compile": "tsc --noEmit",
+    "test": "vitest run",
+    "postinstall": "patch-package && wxt prepare",
+    "fetch-model": "bash scripts/fetch-model.sh",
+    "eval": "vite-node scripts/eval/run.ts --"
+  },
+  "devDependencies": {
+    "patch-package": "^8.0.1",
+    "typescript": "^7.0.2",
+    "vitest": "^3.2.7",
+    "wxt": "^0.21.4"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.3.0",
+    "@mozilla/readability": "^0.6.0",
+    "@sqlite.org/sqlite-wasm": "^3.53.4-build2",
+    "defuddle": "^0.19.5",
+    "preact": "^10.29.8"
+  }
+}

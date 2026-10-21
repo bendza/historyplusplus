@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- history++ mark, 16 px version: heavier loop and wider weave gap so it stays crisp in the toolbar. -->
+  <rect width="64" height="64" rx="12" fill="#3a3fae"/>
+  <path d="M32 32 C27 25 23.5 22 18.5 22 A10 10 0 0 0 18.5 42 C23.5 42 27 39 32 32 C37 25 40.5 22 45.5 22 A10 10 0 0 1 45.5 42 C40.5 42 37 39 32 32 Z" fill="none" stroke="#ffffff" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M27.6 37.8 C29.2 36 30.6 34 32 32 C33.4 30 34.8 28 36.4 26.2" fill="none" stroke="#3a3fae" stroke-width="13"/>
+  <path d="M26.8 38.6 C28.8 36.6 30.4 34.3 32 32 C33.6 29.7 35.2 27.4 37.2 25.4" fill="none" stroke="#ffffff" stroke-width="8"/>
+</svg>

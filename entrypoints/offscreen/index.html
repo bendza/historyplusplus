@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>history++ engine</title>
+    <!-- Chromium only: Firefox hosts the engine in its persistent background page. -->
+    <meta name="manifest.exclude" content="['firefox']" />
+  </head>
+  <body>
+    <!-- Offscreen document: hosts the engine host (src/platform/engine-host.ts). No UI. -->
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
