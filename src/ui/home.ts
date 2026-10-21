@@ -29,14 +29,13 @@ export function HomeView({ q: routeQ, nav }: { q: string; nav: number }) {
     if (routeQ !== s.input) s.setInput(routeQ);
   }, [routeQ, nav]);
 
-  // Hits carry their overall last visit, which can fall outside a date filter; then the
-  // day headings would mislead, so a filtered search lists the rest as one group.
-  const ranged = !!s.res && (s.res.parsed.after != null || s.res.parsed.before != null);
-  // Newest first: no "best match" card, every match grouped by the day it was last visited.
+  // Best match: the card, then the rest in relevance order as one group, each row dated.
+  // (Grouping them by day put a weak match from yesterday above a strong one from last week.)
+  // Newest first: no card, every match grouped by the day it was last visited.
   const recent = s.sort === 'recent';
   const best = s.res && !recent ? s.res.hits[0] : undefined;
   const rest = s.res ? s.res.hits.slice(best ? 1 : 0) : [];
-  const groups = s.res ? (ranged && !recent ? (rest.length ? [{ key: 'more', label: 'More matches', hits: rest }] : []) : groupByDay(rest)) : [];
+  const groups = s.res ? (!recent ? (rest.length ? [{ key: 'more', label: 'More matches', hits: rest }] : []) : groupByDay(rest)) : [];
   const ordered = s.res ? [...(best ? [best] : []), ...groups.flatMap((g) => g.hits)] : [];
   return h(
     'div',
@@ -64,7 +63,7 @@ export function HomeView({ q: routeQ, nav }: { q: string; nav: number }) {
                 'section',
                 { class: 'vb-day', key: g.key },
                 h('h2', { class: 'vb-day-title' }, g.label, h('span', { class: 'muted' }, `${g.hits.length}${s.res && g.key === 'more' && s.res.total > s.res.hits.length ? ` of ${(s.res.total - 1).toLocaleString()}` : ''} result${g.hits.length === 1 ? '' : 's'}`)),
-                h('ol', { class: 'tl' }, g.hits.map((hit) => h(TimeHit, { s, hit, key: hit.id, dated: ranged }))),
+                h('ol', { class: 'tl' }, g.hits.map((hit) => h(TimeHit, { s, hit, key: hit.id, dated: !recent }))),
               ),
             ),
           ),

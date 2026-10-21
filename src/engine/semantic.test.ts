@@ -443,3 +443,41 @@ describe('performance', () => {
     expect(searchMs).toBeLessThan(500);
   }, 60_000);
 });
+
+describe('result diversity', () => {
+  it('shows one of each duplicate page, caps one site, and ranks search-result pages lower', () => {
+    const q = randomUnit();
+    const other = randomUnit();
+    const ids: Record<string, number> = {};
+    // One job-board dashboard visited under five query strings, all matching the query words.
+    for (let i = 0; i < 5; i++) ids[`dash${i}`] = visitWithText(`https://board.example/matches?tab=${i}`, 'Board | Matches', 'quokka quokka island notes', T(2025, 9, 1, 8 + i));
+    // Three different pages on that site.
+    for (let i = 0; i < 3; i++) ids[`board${i}`] = visitWithText(`https://board.example/job/${i}`, `Job ${i}`, 'quokka listing', T(2025, 9, 2, 8 + i));
+    ids.serp = visitWithText('https://www.google.com/search?q=quokka', 'quokka - Google Search', 'quokka quokka quokka island', T(2025, 9, 3));
+    ids.real = visitWithText('https://en.wikipedia.org/wiki/Quokka', 'Quokka', 'small marsupial on rottnest island', T(2025, 8, 1));
+    embedAll((pageId) => (pageId === ids.real ? near(q, 0.95) : near(other, 0.9)));
+
+    const hits = h.search({ q: 'quokka island', queryVector: q }).hits;
+    const top = hits.map((x) => x.url);
+    expect(top.filter((u) => u.includes('/matches')).length).toBe(1);
+    expect(top.slice(0, 4).filter((u) => u.includes('board.example')).length).toBeLessThanOrEqual(2);
+    expect(top[0]).toBe('https://en.wikipedia.org/wiki/Quokka');
+    expect(top.indexOf('https://www.google.com/search?q=quokka')).toBeGreaterThan(0);
+
+    // All switches off: the old behaviour (every duplicate listed).
+    h.tuning.collapseDuplicates = 0;
+    h.tuning.perSiteCap = 0;
+    h.tuning.serpWeight = 1;
+    expect(h.search({ q: 'quokka island', queryVector: q }).hits.filter((x) => x.url.includes('/matches')).length).toBe(5);
+  });
+
+  it('recognises search-engine result pages only', async () => {
+    const { isSearchResultsPage } = await import('./db');
+    for (const u of ['https://www.google.com/search?q=x', 'https://www.google.com/sorry/index?continue=x', 'https://www.google.co.uk/search?q=x', 'https://www.bing.com/search?q=x', 'https://duckduckgo.com/?q=x', 'https://search.brave.com/search?q=x']) {
+      expect(isSearchResultsPage(u), u).toBe(true);
+    }
+    for (const u of ['https://www.google.com/maps', 'https://docs.google.com/document/d/1', 'https://duckduckgo.com/about', 'https://example.com/search?q=x']) {
+      expect(isSearchResultsPage(u), u).toBe(false);
+    }
+  });
+});

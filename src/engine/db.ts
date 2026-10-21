@@ -73,6 +73,21 @@ export const MEANING_BEST_Z = 3;
 export const CHUNK_PENALTY = 0.25;
 // Reciprocal Rank Fusion constant (Cormack et al.); score = sum 1 / (RRF_K + rank).
 const RRF_K = 60;
+// Search-engine result pages (google.com/search, bing.com/search, ...) carry snippets of many
+// sites and AI answers, so they weakly match almost any query and crowded out the page itself
+// in real history ("indie dev with a lot of projects" -> a Google search about a bank). Their
+// fused score is multiplied by this; 1 turns it off.
+export const SERP_WEIGHT = 0.5;
+// Visits to one page under different query strings (app dashboards: /matches?tab=2) are
+// separate rows with the same title. 1: show only the best of each (domain, path, title).
+export const COLLAPSE_DUPLICATES = 1;
+// One site whose pages hold lots of varied text (a job board's dashboards, a feed) matched
+// every query and filled the first page. Each result from a site beyond the first PER_SITE_CAP
+// has its score multiplied by PER_SITE_DECAY once more (3rd x0.6, 4th x0.36, ...), so other
+// sites come up between them. Sending them to the very end put a relevant third GitHub repo
+// below Google pages. 0 = off.
+export const PER_SITE_CAP = 2;
+export const PER_SITE_DECAY = 0.6;
 
 /** Search knobs; HistoryDb.tuning starts as a copy so the eval can try other values. */
 export interface SearchTuning {
@@ -85,6 +100,9 @@ export interface SearchTuning {
   meaningBestZ: number;
   chunkPenalty: number;
   rrfK: number;
+  serpWeight: number;
+  collapseDuplicates: number;
+  perSiteCap: number;
 }
 export const DEFAULT_TUNING: Readonly<SearchTuning> = {
   keywordPool: KEYWORD_POOL,
@@ -96,7 +114,42 @@ export const DEFAULT_TUNING: Readonly<SearchTuning> = {
   meaningBestZ: MEANING_BEST_Z,
   chunkPenalty: CHUNK_PENALTY,
   rrfK: RRF_K,
+  serpWeight: SERP_WEIGHT,
+  collapseDuplicates: COLLAPSE_DUPLICATES,
+  perSiteCap: PER_SITE_CAP,
 };
+
+/** A search engine's result page, judged by host and path. */
+export function isSearchResultsPage(url: string): boolean {
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    return false;
+  }
+  const host = u.hostname.replace(/^www\./, '');
+  const path = u.pathname;
+  return (
+    (/^google\.[a-z.]+$/.test(host) && (path === '/search' || path === '/webhp' || path.startsWith('/sorry/'))) ||
+    (host === 'bing.com' && path === '/search') ||
+    (host === 'duckduckgo.com' && u.searchParams.has('q')) ||
+    (host === 'search.brave.com' && path === '/search') ||
+    (host === 'search.yahoo.com' && path.startsWith('/search')) ||
+    (/^yandex\.[a-z.]+$/.test(host) && path.startsWith('/search')) ||
+    (host === 'ecosia.org' && path === '/search') ||
+    (host === 'perplexity.ai' && path.startsWith('/search'))
+  );
+}
+
+/** Key under which visits to one page with different query strings collapse. */
+function duplicateKey(url: string, title: string): string {
+  try {
+    const u = new URL(url);
+    return `${u.hostname}${u.pathname}\u0000${title}`;
+  } catch {
+    return `${url}\u0000${title}`;
+  }
+}
 
 // related: at most this many pages, each at least MEANING_Z sd above the background.
 const RELATED_MAX = 50;
@@ -704,10 +757,12 @@ export class HistoryDb {
         f.meaning = m;
       } else fused.set(m.pageId, { id: m.pageId, score: s, kwRank: null, meaning: m });
     });
+    this.adjustFused(fused);
     // Ties (same rank in one list each): keyword first, then newer page id.
-    const ranked = [...fused.values()].sort(
+    let ranked = [...fused.values()].sort(
       (x, y) => y.score - x.score || (x.kwRank ?? Infinity) - (y.kwRank ?? Infinity) || y.id - x.id,
     );
+    ranked = this.collapseDuplicates(ranked);
     if (sort === 'recent' && ranked.length) {
       // Same fused candidates (relevance decides what matches), shown newest visit first.
       const ids = ranked.map((f) => f.id);
@@ -718,6 +773,50 @@ export class HistoryDb {
     }
     const slice = ranked.slice(offset, offset + limit);
     return { hits: this.toHits(slice, plan.loose ?? plan.strict), total: ranked.length };
+  }
+
+  /** Down-weight search-engine result pages (see SERP_WEIGHT). */
+  private adjustFused(fused: Map<number, Fused>): void {
+    const w = this.tuning.serpWeight;
+    if (w === 1 || !fused.size) return;
+    const ids = [...fused.keys()];
+    for (const [id, url] of this.db.selectArrays(`SELECT id, url FROM pages WHERE id IN (${placeholders(ids.length)})`, ids)) {
+      if (isSearchResultsPage(String(url))) fused.get(Number(id))!.score *= w;
+    }
+  }
+
+  /**
+   * Keep the best-ranked of each (domain, path, title) (COLLAPSE_DUPLICATES), then lower a
+   * site's results beyond PER_SITE_CAP (PER_SITE_DECAY) and re-rank.
+   */
+  private collapseDuplicates(ranked: Fused[]): Fused[] {
+    const { collapseDuplicates, perSiteCap } = this.tuning;
+    if ((!collapseDuplicates && !perSiteCap) || ranked.length < 2) return ranked;
+    const ids = ranked.map((f) => f.id);
+    const info = new Map(
+      this.db
+        .selectArrays(`SELECT id, url, title, domain FROM pages WHERE id IN (${placeholders(ids.length)})`, ids)
+        .map(([id, url, title, domain]) => [Number(id), { key: duplicateKey(String(url), String(title ?? '')), domain: String(domain ?? '') }]),
+    );
+    const seen = new Set<string>();
+    const perSite = new Map<string, number>();
+    const out: Fused[] = [];
+    for (const f of ranked) {
+      const i = info.get(f.id);
+      if (!i) {
+        out.push(f);
+        continue;
+      }
+      if (collapseDuplicates) {
+        if (seen.has(i.key)) continue;
+        seen.add(i.key);
+      }
+      const n = (perSite.get(i.domain) ?? 0) + 1;
+      perSite.set(i.domain, n);
+      out.push(perSiteCap && n > perSiteCap ? { ...f, score: f.score * PER_SITE_DECAY ** (n - perSiteCap) } : f);
+    }
+    // Stable: equal scores keep their earlier order.
+    return out.map((f, i) => ({ f, i })).sort((a, b) => b.f.score - a.f.score || a.i - b.i).map(({ f }) => f);
   }
 
   /** Page rows + snippets for one page of ranked results (FTS snippet needs `match`). */
