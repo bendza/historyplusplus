@@ -7,7 +7,7 @@ history++ keeps every page you visit, with its text, on your own computer,<br>
 and finds it again when you describe what it was about.</p>
 
 <p align="center">
-  Chrome Web Store (in review, link coming soon) ·
+  <a href="https://chromewebstore.google.com/detail/pfkkahklejaflijcajbclbiagmlpngbf">Chrome Web Store</a> ·
   <a href="docs/store/privacy-policy.md">Privacy</a> ·
   <a href="BUILD.md">Build from source</a>
 </p>
@@ -65,7 +65,7 @@ On 58 labelled searches from real history, the right page came first **67%** of 
 
 ## Browsers
 
-Chrome, Edge, Brave and other Chromium browsers (Manifest V3). A Firefox build exists (`npm run build:firefox`) but isn't on addons.mozilla.org yet.
+Chrome, Edge, Brave and other Chromium browsers (Manifest V3): [install from the Chrome Web Store](https://chromewebstore.google.com/detail/pfkkahklejaflijcajbclbiagmlpngbf). A Firefox build exists (`npm run build:firefox`) but isn't on addons.mozilla.org yet.
 
 ## Build from source
 
