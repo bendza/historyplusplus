@@ -18,11 +18,19 @@ and finds it again when you describe what it was about.</p>
   <a href="BUILD.md">Build from source</a>
 </p>
 
+<p align="center"><b>Plain-language search · Local AI (~120 MB model) · One SQLite file you own · Nothing leaves your computer</b></p>
+
+<p align="center">
+  <img src="branding/store/with-headlines/store-1-search.png" width="32%" alt="Find any page you have read">
+  <img src="branding/store/with-headlines/store-3-insights.png" width="32%" alt="See where your time goes">
+  <img src="branding/store/with-headlines/store-4-welcome.png" width="32%" alt="Lightweight AI, 100% local">
+</p>
+
+## See it in action
+
 ![Searching history in plain language: "that saas that collects user feedback" finds Canny, "run AI models on my own laptop" finds Ollama, "the old thread where someone said you could just use rsync" finds the 2007 Dropbox thread on Hacker News](branding/demo/search-by-meaning.gif)
 
 <sub>Recorded in a fresh browser with version 1.0.2: ten real pages visited, then searched in plain language with the on-device model.</sub>
-
-<p align="center"><b>Plain-language search · Local AI (~120 MB model) · One SQLite file you own · Nothing leaves your computer</b></p>
 
 ## What it does
 
@@ -32,15 +40,6 @@ and finds it again when you describe what it was about.</p>
 - **Timeline and insights.** Your days grouped into sessions; time on the web, top sites, sites you came back to.
 - **Popup** (Alt+H): search, or reopen what you were just reading.
 - **Backups you own.** A daily SQLite backup in your Downloads folder (the last 7 are kept). Restore from any of them, or export to JSON.
-
-## Screenshots
-
-<p align="center">
-  <img src="branding/store/with-headlines/store-1-search.png" width="49%" alt="Find any page you have read">
-  <img src="branding/store/with-headlines/store-3-insights.png" width="49%" alt="See where your time goes">
-  <img src="branding/store/with-headlines/store-4-welcome.png" width="49%" alt="Lightweight AI, 100% local">
-  <img src="branding/store/with-headlines/store-5-settings.png" width="49%" alt="You stay in control">
-</p>
 
 ## Privacy
 
