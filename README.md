@@ -7,12 +7,22 @@ history++ keeps every page you visit, with its text, on your own computer,<br>
 and finds it again when you describe what it was about.</p>
 
 <p align="center">
-  <a href="https://chromewebstore.google.com/detail/pfkkahklejaflijcajbclbiagmlpngbf">Chrome Web Store</a> ·
+  <a href="https://chromewebstore.google.com/detail/pfkkahklejaflijcajbclbiagmlpngbf"><img alt="Chrome Web Store version" src="https://img.shields.io/chrome-web-store/v/pfkkahklejaflijcajbclbiagmlpngbf?label=Chrome%20Web%20Store&color=3a3fae"></a>
+  <a href="https://chromewebstore.google.com/detail/pfkkahklejaflijcajbclbiagmlpngbf"><img alt="Users" src="https://img.shields.io/chrome-web-store/users/pfkkahklejaflijcajbclbiagmlpngbf?color=8f97ff"></a>
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-8f97ff"></a>
+</p>
+
+<p align="center">
+  <b><a href="https://chromewebstore.google.com/detail/pfkkahklejaflijcajbclbiagmlpngbf">Install for Chrome, Edge, Brave</a></b> ·
   <a href="docs/store/privacy-policy.md">Privacy</a> ·
   <a href="BUILD.md">Build from source</a>
 </p>
 
-![Searching history by describing pages: "that startup program I applied to" finds Y Combinator's apply page](branding/demo/search-by-meaning.gif)
+| 🔒 All local | 🪶 Lightweight | ⏱️ Works as you browse | 📊 Statistics |
+|---|---|---|---|
+| Nothing leaves your computer. No account, no cloud, no analytics. | 8 MB extension and a one-time 118 MB model that runs in your browser. | Saves each page you read after a few seconds. Nothing to set up. | Time on the web, when you browse, top sites, a timeline of your days. |
+
+![Searching history by describing pages: "that startup program I applied to" finds Y Combinator's apply page, "the cute australian animal that always smiles" finds the Quokka](branding/demo/search-by-meaning.gif)
 
 <sub>Recorded in a fresh browser: ten real pages visited, then searched by description with the on-device model.</sub>
 
