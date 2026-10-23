@@ -18,13 +18,13 @@ and finds it again when you describe what it was about.</p>
   <a href="BUILD.md">Build from source</a>
 </p>
 
-| 🔒 All local | 🪶 Lightweight | ⏱️ Works as you browse | 📊 Statistics |
+| 🗣️ Plain language | 🔒 All-local AI | 🪶 ~120 MB model | 🗄️ SQLite |
 |---|---|---|---|
-| Nothing leaves your computer. No account, no cloud, no analytics. | 8 MB extension and a one-time 118 MB model that runs in your browser. | Saves each page you read after a few seconds. Nothing to set up. | Time on the web, when you browse, top sites, a timeline of your days. |
+| Ask your history like you'd ask a person: "that saas that collects user feedback". | Runs in your browser. Nothing leaves your computer: no account, no cloud, no analytics. | multilingual-e5-small, downloaded once. The extension itself is 8 MB. | Everything lives in one SQLite database you own, with daily backups and JSON export. |
 
-![Searching history by describing pages: "that startup program I applied to" finds Y Combinator's apply page, "the cute australian animal that always smiles" finds the Quokka](branding/demo/search-by-meaning.gif)
+![Searching history in plain language: "that saas that collects user feedback" finds Canny, "run AI models on my own laptop" finds Ollama, "the old thread where someone said you could just use rsync" finds the 2007 Dropbox thread on Hacker News](branding/demo/search-by-meaning.gif)
 
-<sub>Recorded in a fresh browser: ten real pages visited, then searched by description with the on-device model.</sub>
+<sub>Recorded in a fresh browser with version 1.0.2: ten real pages visited, then searched in plain language with the on-device model.</sub>
 
 ## What it does
 
