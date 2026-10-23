@@ -4,6 +4,7 @@
 //   model=none|downloading|error    semantic model state (default ready)
 //   backfill=running                this browser's import still running
 //   backup=none|running|error       daily backup state (default: a backup this morning)
+//   indexed=1                       search by meaning already finished (for screenshots)
 import { BACKUP_DIR, DEFAULT_SETTINGS, EMBED_MODEL, type DaySessions, type EngineOp, type EngineOps, type IndexStatus, type ModelState, type PageRow, type ParsedQuery, type SearchHit, type VisitRow } from '../shared/protocol';
 
 const params = typeof location !== 'undefined' ? new URLSearchParams(location.search) : new URLSearchParams();
@@ -16,7 +17,7 @@ const SITES: { domain: string; weight: number; titles: string[] }[] = [
   { domain: 'news.ycombinator.com', weight: 7, titles: ['Show HN: I kept my browser history forever', 'Ask HN: How do you organise what you read?', 'Local-first software (2019)'] },
   { domain: 'en.wikipedia.org', weight: 4, titles: ['Okapi BM25 - Wikipedia', 'Memex - Wikipedia', 'Vannevar Bush - Wikipedia', 'As We May Think - Wikipedia'] },
   { domain: 'youtube.com', weight: 5, titles: ['How SQLite works internally - YouTube', 'Building browser extensions in 2026 - YouTube', 'Sourdough starter from scratch - YouTube'] },
-  { domain: 'mail.google.com', weight: 8, titles: ['Inbox (12) - Gmail'] },
+  { domain: 'notion.so', weight: 8, titles: ['Launch checklist – Notion', 'Reading list – Notion'] },
   { domain: 'docs.python.org', weight: 2, titles: ['sqlite3 — DB-API 2.0 interface for SQLite databases'] },
   { domain: 'gist.github.com', weight: 1, titles: ['FTS5 snippet helper.js'] },
   { domain: 'stackoverflow.com', weight: 4, titles: ['How to use OPFS from a dedicated worker?', 'MV3 service worker keeps dying'] },
@@ -288,7 +289,7 @@ let modelState: ModelState =
         ? { status: 'error', loaded: Math.round(MODEL_BYTES * 0.3), total: MODEL_BYTES, downloadedAt: null, error: 'The download stopped (network changed). Nothing was saved yet.' }
         : { status: 'ready', loaded: MODEL_BYTES, total: MODEL_BYTES, downloadedAt: Date.now() - 9 * DAY };
 
-const IDX = { pages: FRESH ? 0 : 11_734, withText: FRESH ? 0 : 412, chunksPerTextPage: 6, startedAt: Date.now(), startEmbedded: modelState.status === 'ready' ? 7_900 : 0, perSecond: 60 };
+const IDX = { pages: FRESH ? 0 : 11_734, withText: FRESH ? 0 : 412, chunksPerTextPage: 6, startedAt: Date.now(), startEmbedded: modelState.status !== 'ready' ? 0 : params.get('indexed') === '1' ? 1e9 : 7_900, perSecond: 60 };
 let mockSemantic = true;
 
 /** Called by api.ts when mock settings change, so the fake embedder can show "Off". */
