@@ -18,22 +18,29 @@ and finds it again when you describe what it was about.</p>
   <a href="BUILD.md">Build from source</a>
 </p>
 
-| 🗣️ Plain language | 🔒 All-local AI | 🪶 ~120 MB model | 🗄️ SQLite |
-|---|---|---|---|
-| Ask your history like you'd ask a person: "that saas that collects user feedback". | Runs in your browser. Nothing leaves your computer: no account, no cloud, no analytics. | multilingual-e5-small, downloaded once. The extension itself is 8 MB. | Everything lives in one SQLite database you own, with daily backups and JSON export. |
-
 ![Searching history in plain language: "that saas that collects user feedback" finds Canny, "run AI models on my own laptop" finds Ollama, "the old thread where someone said you could just use rsync" finds the 2007 Dropbox thread on Hacker News](branding/demo/search-by-meaning.gif)
 
 <sub>Recorded in a fresh browser with version 1.0.2: ten real pages visited, then searched in plain language with the on-device model.</sub>
 
+<p align="center"><b>Plain-language search · Local AI (~120 MB model) · One SQLite file you own · Nothing leaves your computer</b></p>
+
 ## What it does
 
-- **Search by meaning.** Type "that accelerator I applied to" or "the Lisbon flat near the tram" and get the page, even when those words aren't on it. Plain words, `site:`, and dates ("last week", "in September") work too.
+- **Search by meaning.** Type "that saas that collects user feedback" or "run AI models on my own laptop" and get the page, even when those words aren't in its title. Plain words, `site:`, and dates ("last week", "in September") work too.
 - **Kept forever.** Every visit, plus the readable text of the pages you actually read. Your existing browser history is imported on install, and you can import history files from other browsers.
 - **Many languages.** The search model is multilingual. Date words work in English and in Bosnian, Serbian and Croatian.
 - **Timeline and insights.** Your days grouped into sessions; time on the web, top sites, sites you came back to.
 - **Popup** (Alt+H): search, or reopen what you were just reading.
 - **Backups you own.** A daily SQLite backup in your Downloads folder (the last 7 are kept). Restore from any of them, or export to JSON.
+
+## Screenshots
+
+<p align="center">
+  <img src="branding/store/with-headlines/store-1-search.png" width="49%" alt="Find any page you have read">
+  <img src="branding/store/with-headlines/store-3-insights.png" width="49%" alt="See where your time goes">
+  <img src="branding/store/with-headlines/store-4-welcome.png" width="49%" alt="Lightweight AI, 100% local">
+  <img src="branding/store/with-headlines/store-5-settings.png" width="49%" alt="You stay in control">
+</p>
 
 ## Privacy
 
